@@ -1,34 +1,22 @@
 'use strict'
-
+require('dotenv').config()
 import fetch from 'node-fetch'
 import Paths from '../conf/paths'
-const apiaiApp = require('apiai')(process.env.APIAI_TOKEN)
+import Boom from 'boom'
 
-exports.DialogFlow = (resquest, reply) => {
-    getMessage(reply)
-}
-
-
-const getMessage = (event) => {
-    let sender = event.sender.id;
-    let text = event.message.text;
-
-    let apiai = apiaiApp.textRequest(text, {
-        sessionId: 'Webservice-Bot'
-    });
-
-    apiai.on('response', (response) => {
-
-        let aiText = response.result.fulfillment.speech;
-        var json = {
-            recipient: {id: sender},
-            message: {text: aiText}
+exports.DialogFlow = (request, reply) => {
+    const text = encodeURIComponent(request.params.text)
+    fetch(Paths.extern.apiai(text), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${process.env.APIAI_TOKEN}`
+        } })
+    .then(res => res.json())
+    .then(json => {
+        const res = {
+            message: json.result.fulfillment.speech
         }
-    });
-
-    apiai.on('error', (error) => {
-        console.log(error);
-    });
-    
-    apiai.end
+        reply(res)
+    })
+    .catch(err => console.log(err))
 }
