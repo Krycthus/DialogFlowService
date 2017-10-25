@@ -15,6 +15,7 @@ if (!process.env.APIAI_TOKEN && !process.env.BASE_PATH) {
 }
 
 const server = new Hapi.Server();
+//server.connection({ port: 4003, host: '88.161.155.93', routes: { cors: true }, labels: ['api'] })
 server.connection({ port: 4003, host: 'localhost', routes: { cors: true }, labels: ['api'] })
 
 server.register([

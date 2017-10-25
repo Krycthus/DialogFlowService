@@ -5,6 +5,7 @@ import Paths from '../conf/paths'
 import Boom from 'boom'
 
 exports.DialogFlow = (request, reply) => {
+    console.log(request.params.text)
     const text = encodeURIComponent(request.params.text)
     fetch(Paths.extern.apiai(text), {
         method: 'GET',
